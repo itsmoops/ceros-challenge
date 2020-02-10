@@ -17,11 +17,11 @@ export class Canvas {
     }
 
     createCanvas() {
-        const canvas = document.getElementById('skiCanvas');
+        const canvas = document.getElementById("skiCanvas");
         canvas.width = this.width * window.devicePixelRatio;
         canvas.height = this.height * window.devicePixelRatio;
-        canvas.style.width = this.width + 'px';
-        canvas.style.height = this.height + 'px';
+        canvas.style.width = this.width + "px";
+        canvas.style.height = this.height + "px";
 
         this.ctx = canvas.getContext("2d");
         this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
@@ -41,5 +41,25 @@ export class Canvas {
         y -= this.drawOffset.y;
 
         this.ctx.drawImage(image, x, y, width, height);
+    }
+
+    /**
+     * fillText
+     *
+     * Helper function to write text to the canvas.
+     *
+     * @param {String} text
+     * @param {Number} size
+     * @param {Number} x
+     * @param {Number} y
+     */
+    fillText(text, size, x, y) {
+        x -= this.drawOffset.x;
+        y -= this.drawOffset.y;
+
+        this.ctx.fillStyle = "grey";
+        this.ctx.font = `${size}px monospace`;
+
+        this.ctx.fillText(text, x, y);
     }
 }

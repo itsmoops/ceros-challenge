@@ -5,10 +5,12 @@ export function randomInt(min, max) {
 }
 
 export function intersectTwoRects(rect1, rect2) {
-    return !(rect2.left > rect1.right ||
+    return !(
+        rect2.left > rect1.right ||
         rect2.right < rect1.left ||
         rect2.top > rect1.bottom ||
-        rect2.bottom < rect1.top);
+        rect2.bottom < rect1.top
+    );
 }
 
 export class Rect {

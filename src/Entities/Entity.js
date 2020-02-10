@@ -1,8 +1,10 @@
+import { Rect } from "../Core/Utils";
+
 export class Entity {
     x = 0;
     y = 0;
 
-    assetName = '';
+    assetName = "";
 
     constructor(x, y) {
         this.x = x;
@@ -18,6 +20,23 @@ export class Entity {
             x: this.x,
             y: this.y
         };
+    }
+
+    /**
+     * getAssetBounds
+     *
+     * I moved this logic into an Entity level class function, as it was being used
+     * in several locations.
+     *
+     * @param {Object} asset
+     */
+    getAssetBounds(asset) {
+        return new Rect(
+            this.x - asset.width / 2,
+            this.y - asset.height / 2,
+            this.x + asset.width / 2,
+            this.y - asset.height / 4
+        );
     }
 
     draw(canvas, assetManager) {

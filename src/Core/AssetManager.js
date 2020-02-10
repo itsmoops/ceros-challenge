@@ -1,8 +1,7 @@
 export class AssetManager {
     loadedAssets = [];
 
-    constructor() {
-    }
+    constructor() {}
 
     async loadAssets(assets) {
         const assetPromises = [];
@@ -16,7 +15,7 @@ export class AssetManager {
     }
 
     loadSingleAsset(assetUrl, assetName) {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             const assetImage = new Image();
             assetImage.onload = () => {
                 assetImage.width /= 2;

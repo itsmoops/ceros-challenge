@@ -1,5 +1,5 @@
-import * as Constants from '../../Constants';
-import { randomInt } from '../../Core/Utils';
+import * as Constants from "../../Constants";
+import { randomInt, intersectTwoRects, Rect } from "../../Core/Utils";
 import { Obstacle } from "./Obstacle";
 
 const DISTANCE_BETWEEN_OBSTACLES = 50;
@@ -10,28 +10,29 @@ const NEW_OBSTACLE_CHANCE = 8;
 export class ObstacleManager {
     obstacles = [];
 
-    constructor() {
-    }
+    constructor() {}
 
     getObstacles() {
         return this.obstacles;
     }
 
     drawObstacles(canvas, assetManager) {
-        this.obstacles.forEach((obstacle) => {
+        this.obstacles.forEach(obstacle => {
             obstacle.draw(canvas, assetManager);
         });
     }
 
     placeInitialObstacles() {
-        const numberObstacles = Math.ceil((Constants.GAME_WIDTH / STARTING_OBSTACLE_REDUCER) * (Constants.GAME_HEIGHT / STARTING_OBSTACLE_REDUCER));
+        const numberObstacles = Math.ceil(
+            (Constants.GAME_WIDTH / STARTING_OBSTACLE_REDUCER) * (Constants.GAME_HEIGHT / STARTING_OBSTACLE_REDUCER)
+        );
 
         const minX = -Constants.GAME_WIDTH / 2;
         const maxX = Constants.GAME_WIDTH / 2;
         const minY = STARTING_OBSTACLE_GAP;
         const maxY = Constants.GAME_HEIGHT / 2;
 
-        for(let i = 0; i < numberObstacles; i++) {
+        for (let i = 0; i < numberObstacles; i++) {
             this.placeRandomObstacle(minX, maxX, minY, maxY);
         }
 
@@ -42,24 +43,22 @@ export class ObstacleManager {
 
     placeNewObstacle(gameWindow, previousGameWindow) {
         const shouldPlaceObstacle = randomInt(1, NEW_OBSTACLE_CHANCE);
-        if(shouldPlaceObstacle !== NEW_OBSTACLE_CHANCE) {
+        if (shouldPlaceObstacle !== NEW_OBSTACLE_CHANCE) {
             return;
         }
 
-        if(gameWindow.left < previousGameWindow.left) {
+        if (gameWindow.left < previousGameWindow.left) {
             this.placeObstacleLeft(gameWindow);
-        }
-        else if(gameWindow.left > previousGameWindow.left) {
+        } else if (gameWindow.left > previousGameWindow.left) {
             this.placeObstacleRight(gameWindow);
         }
 
-        if(gameWindow.top < previousGameWindow.top) {
+        if (gameWindow.top < previousGameWindow.top) {
             this.placeObstacleTop(gameWindow);
-        }
-        else if(gameWindow.top > previousGameWindow.top) {
+        } else if (gameWindow.top > previousGameWindow.top) {
             this.placeObstacleBottom(gameWindow);
         }
-    };
+    }
 
     placeObstacleLeft(gameWindow) {
         this.placeRandomObstacle(gameWindow.left, gameWindow.left, gameWindow.top, gameWindow.bottom);
@@ -88,23 +87,46 @@ export class ObstacleManager {
         const x = randomInt(minX, maxX);
         const y = randomInt(minY, maxY);
 
-        const foundCollision = this.obstacles.find((obstacle) => {
+        const foundCollision = this.obstacles.find(obstacle => {
             return (
-                x > (obstacle.x - DISTANCE_BETWEEN_OBSTACLES) &&
-                x < (obstacle.x + DISTANCE_BETWEEN_OBSTACLES) &&
-                y > (obstacle.y - DISTANCE_BETWEEN_OBSTACLES) &&
-                y < (obstacle.y + DISTANCE_BETWEEN_OBSTACLES)
+                x > obstacle.x - DISTANCE_BETWEEN_OBSTACLES &&
+                x < obstacle.x + DISTANCE_BETWEEN_OBSTACLES &&
+                y > obstacle.y - DISTANCE_BETWEEN_OBSTACLES &&
+                y < obstacle.y + DISTANCE_BETWEEN_OBSTACLES
             );
         });
 
-        if(foundCollision) {
+        if (foundCollision) {
             return this.calculateOpenPosition(minX, maxX, minY, maxY);
-        }
-        else {
+        } else {
             return {
                 x: x,
                 y: y
             };
         }
+    }
+
+    /**
+     * detectCollision
+     *
+     * I thought it made sense to move this logic out of Skier.js and
+     * into it's own ObstacleManager function. It's fairly verbose,
+     * and I could see this being reused.
+     *
+     * @param {Object} obstacleAsset
+     * @param {Object} collisionBounds
+     */
+    detectCollision(obstacleAsset, collisionBounds) {
+        return this.obstacles.find(obstacle => {
+            const obstaclePosition = obstacle.getPosition();
+            const obstacleBounds = new Rect(
+                obstaclePosition.x - obstacleAsset.width / 2,
+                obstaclePosition.y - obstacleAsset.height / 2,
+                obstaclePosition.x + obstacleAsset.width / 2,
+                obstaclePosition.y
+            );
+
+            return intersectTwoRects(obstacleBounds, collisionBounds);
+        });
     }
 }
