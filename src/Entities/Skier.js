@@ -92,7 +92,7 @@ export class Skier extends Entity {
 
     turnLeft() {
         /*
-            The "snowstorm" bug was caused by the direction property already being set to 0 (crash),
+            The "blizzard" bug was caused by the direction property already being set to 0 (crash),
             so when you go to move left, this function calls setDirection with -1. This ends up throwing an
             error when updateAsset attempts to find an asset at an index that doesn't exist in the lookup.
 

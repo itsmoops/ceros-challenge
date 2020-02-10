@@ -1,7 +1,9 @@
+export const CANVAS_ID = "skiCanvas";
+
 export const GAME_WIDTH = window.innerWidth;
 export const GAME_HEIGHT = window.innerHeight;
 
-export const TIMER_DURATION = 1;
+export const TIMER_DURATION = 1000;
 export const ANIMATION_DURATION = 200;
 
 export const RAMP = "ramp";
@@ -34,7 +36,7 @@ export const SKIER_DIAGONAL_SPEED_REDUCER = 1.4142;
 
 export const RHINO_OFFSET_X = GAME_WIDTH / 2;
 export const RHINO_OFFSET_Y = -GAME_HEIGHT / 2;
-export const RHINO_CHASE_START_TIME = 2000;
+export const RHINO_CHASE_START_TIME = 10;
 export const RHINO_STARTING_SPEED = 15;
 export const RHINO_DIAGONAL_SPEED_REDUCER = 3.5;
 

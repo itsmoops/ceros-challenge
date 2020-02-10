@@ -1,3 +1,5 @@
+import * as Constants from "../Constants";
+
 export class Canvas {
     x = 0;
     y = 0;
@@ -16,12 +18,21 @@ export class Canvas {
         this.createCanvas();
     }
 
+    /**
+     * Decided to dynamically generate a new canvas on every new game,
+     * and remove the canvas altogether when the user resets.
+     *
+     * This prevents any weird issues with a stale canvas from a previous game
+     * lingering on the DOM.
+     */
     createCanvas() {
-        const canvas = document.getElementById("skiCanvas");
+        const canvas = document.createElement("canvas");
+        canvas.id = Constants.CANVAS_ID;
         canvas.width = this.width * window.devicePixelRatio;
         canvas.height = this.height * window.devicePixelRatio;
         canvas.style.width = this.width + "px";
         canvas.style.height = this.height + "px";
+        document.body.append(canvas);
 
         this.ctx = canvas.getContext("2d");
         this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
@@ -29,6 +40,17 @@ export class Canvas {
 
     clearCanvas() {
         this.ctx.clearRect(this.x, this.y, this.width, this.height);
+    }
+
+    /**
+     * removeCanvas
+     * 
+     * Removes the current game's canvas from the DOM.
+     * To be used when resetting the game.
+     */
+    removeCanvas() {
+        const canvas = document.getElementById(Constants.CANVAS_ID);
+        document.body.removeChild(canvas);
     }
 
     setDrawOffset(x, y) {

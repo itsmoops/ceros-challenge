@@ -42,6 +42,10 @@ export class Game {
         document.addEventListener("keydown", this.boundHandleKeyDown);
     }
 
+    reset() {
+        this.canvas.removeCanvas();
+    }
+
     init() {
         this.startGameTimer();
         this.obstacleManager.placeInitialObstacles();
@@ -58,7 +62,6 @@ export class Game {
 		*/
         if (!this.paused) {
             this.canvas.clearCanvas();
-
             this.updateGameWindow();
             this.drawGameWindow();
         }
@@ -78,35 +81,36 @@ export class Game {
     startGameTimer() {
         let timer = 0;
         const timerInterval = setInterval(() => {
-            this.timer = timer++;
+            if (!this.paused) {
+                this.timer = ++timer;
 
-            if (this.gameOver) {
-                clearInterval(timerInterval);
-            } else if (this.timer > Constants.RHINO_CHASE_START_TIME && !this.rhino.chasing) {
-                const skierPosition = this.skier.getPosition();
-                this.rhino.startChase(skierPosition);
+                if (this.gameOver) {
+                    clearInterval(timerInterval);
+                } else if (!this.rhino.chasing && this.timer > Constants.RHINO_CHASE_START_TIME) {
+                    const skierPosition = this.skier.getPosition();
+                    this.rhino.startChase(skierPosition);
+                }
             }
         }, Constants.TIMER_DURATION);
     }
 
     updateGameWindow() {
-        // No need to move skier if game is over.
-        if (!this.gameOver) {
+        if (!this.rhino.caughtSkier) {
             this.skier.move();
-
-            const previousGameWindow = this.gameWindow;
-            this.calculateGameWindow();
-
-            /*
-				This check fixes bug where previousGameWindow was intermittently null
-				and causing the game to crash.
-			*/
-            if (previousGameWindow) {
-                this.obstacleManager.placeNewObstacle(this.gameWindow, previousGameWindow);
-            }
-
-            this.skier.checkIfSkierHitObstacle(this.obstacleManager, this.assetManager);
         }
+
+        const previousGameWindow = this.gameWindow;
+        this.calculateGameWindow();
+
+        /*
+            This check fixes bug where previousGameWindow was intermittently null
+            and causing the game to crash.
+        */
+        if (previousGameWindow) {
+            this.obstacleManager.placeNewObstacle(this.gameWindow, previousGameWindow);
+        }
+
+        this.skier.checkIfSkierHitObstacle(this.obstacleManager, this.assetManager);
 
         /* 
 			If the rhino is chasing the skier and hasn't caught up yet, we need to update
@@ -132,7 +136,8 @@ export class Game {
         this.rhino.draw(this.canvas, this.assetManager);
 
         // Added a progress timer to the top-right of the game window.
-        this.canvas.fillText(String(this.timer).padStart(6, "0"), 30, this.gameWindow.right - 150, this.gameWindow.top + 50);
+        const time = this.timer < 10 ? String(this.timer).padStart(2, "0") : this.timer;
+        this.canvas.fillText(`${time}s`, 30, this.gameWindow.right - 80, this.gameWindow.top + 50);
 
         // Added some "game over" messaging.
         if (this.gameOver) {

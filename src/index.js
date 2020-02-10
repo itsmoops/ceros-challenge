@@ -5,7 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let skiGame;
 
     function initializeNewGame() {
+        if (skiGame) {
+            skiGame.reset();
+        }
+
         skiGame = new Game();
+
         skiGame.load().then(() => {
             skiGame.init();
             skiGame.run();

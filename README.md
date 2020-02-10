@@ -98,3 +98,23 @@ how creative candidates get with this.
 * Write more unit tests for your code
 
 We are looking forward to see what you come up with!
+
+
+**My Comments**
+
+This was a super fun coding challenge! I documented my changes in more detail in the code with comments.
+
+I was able to do the following:
+* Fix "blizzard" bug - Turning left after a collision no longer crashes the game
+  - I wrote unit tests for this fix in Skier.test.js
+* Implement jumping - The skier jumps when hitting a ramp, or when the user presses the space bar
+  - The skier is able to jump over rocks but not trees
+  - The skier does a jumping "trick" animation
+* Add the rhino
+  - The rhino starts chasing the skier after 10 seconds has elapsed
+  - Once the rhino catches the skier, it eats the skier, and the game ends
+* Add reset functionality - User can press any key after the game is over to restart
+* Add pausing functionality - Pressing "Enter" pauses and unpauses the game
+* Add second counter that increments as the skier skis further
+* Deployed the game to Heroku:
+  - https://ceros-ski-eric-moore.herokuapp.com
